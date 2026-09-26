@@ -25,6 +25,7 @@ class IntakeRequest(BaseModel):
     mls_number:str; buyers:str; agent_name:str; offer_text:str
     buyer_phone:str|None=None; buyer_cell:str|None=None; buyer_email:str|None=None
     agent_license_no:str|None=None; agent_phone:str|None=None; agent_cell:str|None=None; agent_email:str|None=None
+    buyer_attorney_name:str|None=None; buyer_attorney_email:str|None=None
 class ClarificationRequest(BaseModel): offer:OfferData; updates:dict[str,str|int|float|bool|None]=Field(default_factory=dict)
 class FieldCheck(BaseModel):
     key:str; label:str; status:Status; value:str|int|float|bool|None=None; reason:str|None=None; section:str="Offer Terms"; input_type:str="text"; options:list[str]=Field(default_factory=list)
