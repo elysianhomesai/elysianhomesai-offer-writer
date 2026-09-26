@@ -37,6 +37,8 @@ def intake(req: IntakeRequest):
     offer.agent_phone = req.agent_phone
     offer.agent_cell = req.agent_cell
     offer.agent_email = req.agent_email
+    offer.buyer_attorney_name = req.buyer_attorney_name
+    offer.buyer_attorney_email = req.buyer_attorney_email
     if offer.buyers:
         offer.buyers[0].phone = req.buyer_phone
         offer.buyers[0].cell = req.buyer_cell
