@@ -59,7 +59,7 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
     if x:
         value=_money(x.group(1),x.group(2))
         if value is not None:data.seller_concession=value
-    x=m(r"escalat(?:e|ion).*?(?:by|increment)\s*\$?([\d,.]+)\s*(k)?.*?(?:to|cap(?:ped)?(?:\s+at)?)\s*\$?([\d,.]+)\s*(k)?")
+    x=m(r"escalat(?:e|ion).*?(?:by|increment)\s*\$?([\d,.]+)\s*(k)?.*?(?:up\s+to|to|cap(?:ped)?(?:\s+at)?)\s*\$?([\d,.]+)\s*(k)?")
     if x:
         increment=_money(x.group(1),x.group(2))
         cap=_money(x.group(3),x.group(4))
