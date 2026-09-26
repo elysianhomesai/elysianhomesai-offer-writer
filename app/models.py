@@ -62,6 +62,7 @@ class OfferData(BaseModel):
     # Broker / Paragraph 10
     broker_brought_sale: bool | None = None
     broker_name: str | None = None
+    agent_name: str | None = None
 
     # Addenda / Paragraphs 10-11
     escalation: bool = False
