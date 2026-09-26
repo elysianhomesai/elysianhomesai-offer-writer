@@ -7,7 +7,8 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
         checks.append(FieldCheck(key=key,label=label,status="missing" if missing else "complete",value=value,
             reason=reason if missing else None,section=section,input_type=input_type,options=options or []))
 
-    add("mls_number","MLS Number",o.mls_number,True,"Required to identify the property.","Property")\n    add("seller_1","Seller",o.seller_1,True,"Required on the purchase contract.","Price & Parties")
+    add("mls_number","MLS Number",o.mls_number,True,"Required to identify the property.","Property")
+    add("seller_1","Seller",o.seller_1,True,"Required on the purchase contract.","Price & Parties")
     add("property_address","Property Address",o.property_address,True,"Required on the purchase contract.","Property")
     add("county","County",o.county,True,"Required for the property description.","Property")
     add("municipality_type","Municipality Type",o.municipality_type,True,"Select Town, City, or Village.","Property","select",["Town","City","Village"])
@@ -16,7 +17,11 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
 
     add("buyers","Buyer(s)",", ".join(b.name for b in o.buyers),True,"At least one buyer is required.","Price & Parties")
     add("purchase_price","Purchase Price",o.purchase_price,True,"Confirm the offered purchase price.","Price & Parties","money")
-    add("deposit","Deposit",o.deposit,True,"Confirm the deposit amount.","Price & Parties","money")\n    add("deposit_form","Deposit Form",o.deposit_form,True,"Choose the deposit payment method.","Price & Parties","select",["cash","personal_check","official_bank_check","eft","wire"])\n    add("deposit_delivery","Deposit Delivery",o.deposit_delivery,True,"Confirm whether the deposit is delivered or due within two days.","Price & Parties","select",["delivered","within_2_days"])\n    add("escrow_agent","Escrow Agent",o.escrow_agent,True,"Required for the deposit provision.","Price & Parties")\n    add("escrow_bank","Escrow Bank",o.escrow_bank,True,"Required for the deposit provision.","Price & Parties")
+    add("deposit","Deposit",o.deposit,True,"Confirm the deposit amount.","Price & Parties","money")
+    add("deposit_form","Deposit Form",o.deposit_form,True,"Choose the deposit payment method.","Price & Parties","select",["cash","personal_check","official_bank_check","eft","wire"])
+    add("deposit_delivery","Deposit Delivery",o.deposit_delivery,True,"Confirm whether the deposit is delivered or due within two days.","Price & Parties","select",["delivered","within_2_days"])
+    add("escrow_agent","Escrow Agent",o.escrow_agent,True,"Required for the deposit provision.","Price & Parties")
+    add("escrow_bank","Escrow Bank",o.escrow_bank,True,"Required for the deposit provision.","Price & Parties")
     add("seller_concession","Seller Concession",o.seller_concession,False,section="Price & Parties")
 
     add("financing_type","Financing",o.financing_type,True,"Choose cash or financing type.","Financing","select",["conventional","fha","va","cash","other"])
@@ -25,7 +30,8 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
         add("mortgage_amount","Calculated Mortgage",o.mortgage_amount,True,"Calculated from price and down payment.","Financing","money")
         add("mortgage_commitment_date","Mortgage Commitment Date",o.mortgage_commitment_date,True,"Required when using a mortgage contingency.","Financing","date")
         add("interest_rate_cap","Maximum Interest Rate %",o.interest_rate_cap,True,"The mortgage contingency contains a maximum interest-rate field.","Financing","number")
-        add("mortgage_term_years","Mortgage Term (Years)",o.mortgage_term_years,True,"The mortgage contingency contains a loan-term field.","Financing","number")\n        add("mortgage_repair_threshold","Mortgage Repair Threshold",o.mortgage_repair_threshold,True,"Confirm the lender-required repair threshold.","Financing","money")
+        add("mortgage_term_years","Mortgage Term (Years)",o.mortgage_term_years,True,"The mortgage contingency contains a loan-term field.","Financing","number")
+        add("mortgage_repair_threshold","Mortgage Repair Threshold",o.mortgage_repair_threshold,True,"Confirm the lender-required repair threshold.","Financing","money")
 
     add("sale_transfer_contingency","Sale/Transfer of Buyer's Property",o.sale_transfer_contingency,True,"Confirm whether this contingency applies.","Contingencies","boolean")
     add("building_code_contingency","Building Code Compliance Contingency",o.building_code_contingency,True,"Confirm whether this contingency applies.","Contingencies","boolean")
@@ -41,7 +47,8 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
 
     add("systems_working_order","Systems in Working Order at Closing",o.systems_working_order,True,"Confirm whether the optional working-order provision is selected.","Property Conditions","boolean")
     add("property_disclosure_status","Property Condition Disclosure",o.property_disclosure_status,True,"Confirm provided or exempt.","Property Conditions","select",["provided","exempt"])
-    add("hetpa_basis","HETPA Representation",o.hetpa_basis,True,"At least one HETPA representation must be selected.","Property Conditions","select",["primary_residence","lineal_relation_or_spouse","seller_estate_trust_business","addendum_required"])\n    add("zoning_use","Zoning Use",o.zoning_use,True,"Confirm the represented zoning use.","Property Conditions")
+    add("hetpa_basis","HETPA Representation",o.hetpa_basis,True,"At least one HETPA representation must be selected.","Property Conditions","select",["primary_residence","lineal_relation_or_spouse","seller_estate_trust_business","addendum_required"])
+    add("zoning_use","Zoning Use",o.zoning_use,True,"Confirm the represented zoning use.","Property Conditions")
 
     add("closing_date","Closing Date",o.closing_date,True,"Confirm the proposed closing date.","Closing","date")
     add("closing_county","Closing County",o.closing_county,True,"The contract identifies the county clerk's office.","Closing")
@@ -52,7 +59,8 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
         add("broker_name","Broker Name",o.broker_name,True,"Enter the broker named in the contract.","Broker & Addenda")
 
     if o.escalation:
-        add("contract_date","Contract Date",o.contract_date,True,"Required on the escalation agreement.","Addenda","date")\n        add("escalation_increment","Escalation Increment",o.escalation_increment,True,"Required for the Price Escalation Agreement.","Addenda","money")
+        add("contract_date","Contract Date",o.contract_date,True,"Required on the escalation agreement.","Addenda","date")
+        add("escalation_increment","Escalation Increment",o.escalation_increment,True,"Required for the Price Escalation Agreement.","Addenda","money")
         add("escalation_cap","Escalation Cap",o.escalation_cap,True,"Required for the Price Escalation Agreement.","Addenda","money")
 
     add("offer_expiration","Offer Expiration",o.offer_expiration,True,"Confirm when the offer expires.","Life of Offer","datetime-local")
