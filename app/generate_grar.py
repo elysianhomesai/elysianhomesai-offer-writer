@@ -83,8 +83,28 @@ def overlay(n,o):
             if len(parts)>1:
                 hh,mm=map(int,parts[1][:5].split(":"));am=hh<12;txt(c,451,633,f"{hh%12 or 12}:{mm:02d}",8,65);check(c,510 if am else 545,632)
     elif n==8:
-        txt(c,118,72,o.property_address,8,310);txt(c,465,72,o.mls_number,8,105);txt(c,326,94,buyers[0],8,245);txt(c,326,123,buyers[1],8,245)
-        txt(c,326,438,o.broker_name,8,245);txt(c,326,586,o.agent_name,8,245);txt(c,326,615,o.agent_license_no,8,245);txt(c,326,642,o.agent_phone,8,125);txt(c,326,670,o.agent_cell,8,125);txt(c,326,698,o.agent_email,8,245)
+        # Buyer-side administrative information
+        txt(c,118,72,o.property_address,8,310);txt(c,465,72,o.mls_number,8,105)
+        txt(c,326,94,buyers[0],8,245);txt(c,326,123,buyers[1],8,245)
+        if o.buyers:
+            txt(c,326,176,o.buyers[0].phone or o.buyers[0].cell,8,120)
+            txt(c,326,204,o.buyers[0].email,8,245)
+        txt(c,326,232,o.buyer_attorney_name,8,245)
+        txt(c,326,344,o.buyer_attorney_email,8,245)
+
+        # Elysian Homes brokerage information is constant
+        txt(c,326,438,"Elysian Homes by Mark Siwiec and Associates",7,245)
+        txt(c,326,466,"10991239051",8,245)
+        txt(c,326,494,"1357 Monroe Avenue",8,245)
+        txt(c,326,522,"Rochester, NY 14618",8,245)
+        txt(c,326,550,"585-330-8750",8,125)
+
+        # Selling agent information varies by agent
+        txt(c,326,586,o.agent_name,8,245)
+        txt(c,326,615,o.agent_license_no,8,245)
+        txt(c,326,642,o.agent_phone,8,125)
+        txt(c,326,670,o.agent_cell,8,125)
+        txt(c,326,698,o.agent_email,8,245)
     c.showPage();c.save();b.seek(0);return PdfReader(b).pages[0]
 
 def addendum(kind,o):
