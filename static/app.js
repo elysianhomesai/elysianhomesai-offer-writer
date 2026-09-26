@@ -32,7 +32,7 @@ function render(d){
   $("#status").innerHTML='<div class="summary '+(d.ready?"ready":"needs")+'">'+(d.ready?"✓ OFFER READY":"⚠ "+missing.length+" item"+(missing.length===1?"":"s")+" still needed")+"</div>";
   let lastSection="";
   $("#checks").innerHTML=d.checks.map(c=>{const head=c.section!==lastSection?'<div class="section-head">'+c.section+'</div>':"";lastSection=c.section;return head+'<div class="check '+c.status+'"><div class="icon">'+(c.status==="complete"?"✓":"!")+'</div><div><strong>'+c.label+'</strong>'+(c.reason?'<div class="reason">'+c.reason+"</div>":"")+'</div><div class="value">'+(c.status==="complete"?display(c):inputFor(c))+"</div></div>"}).join("");
-  $("#continueWrap").innerHTML=d.ready?'<div class="ready-note">All required offer terms are complete. Review every term before generating documents.</div><button id="pdfBtn">Download Final Offer Review PDF</button>':'<button id="continue">Continue <span>→</span></button>';
+  $("#continueWrap").innerHTML=d.ready?'<div class="ready-note">All required offer terms are complete. Review every term before generating documents.</div><button id="pdfBtn">Generate Official GRAR PDF</button>':'<button id="continue">Continue <span>→</span></button>';
   const b=$("#continue");if(b)b.onclick=submitClarifications;const p=$("#pdfBtn");if(p)p.onclick=downloadPdf;
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -51,10 +51,10 @@ $("#edit").onclick=()=>{$("#review").classList.add("hidden");$("#intake").classL
 async function downloadPdf(){
   const btn=$("#pdfBtn");btn.disabled=true;btn.textContent="Generating…";
   try{
-    const r=await fetch("/api/contract-summary",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({offer:current.offer,updates:{}})});
-    if(!r.ok)throw new Error("Unable to generate final review");
+    const r=await fetch("/api/final-grar-pdf",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({offer:current.offer,updates:{}})});
+    if(!r.ok)throw new Error("Unable to generate official GRAR PDF");
     const blob=await r.blob(),url=URL.createObjectURL(blob),a=document.createElement("a");
-    a.href=url;a.download="offer-"+current.offer.mls_number+"-final-review.pdf";a.click();URL.revokeObjectURL(url);
+    a.href=url;a.download="offer-"+current.offer.mls_number+"-GRAR-offer.pdf";a.click();URL.revokeObjectURL(url);
   }catch(err){alert(err.message)}
-  finally{btn.disabled=false;btn.textContent="Download Final Offer Review PDF"}
+  finally{btn.disabled=false;btn.textContent="Generate Official GRAR PDF"}
 }
