@@ -50,6 +50,7 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
     add("broker_brought_sale","Broker Brought About Sale",o.broker_brought_sale,True,"Confirm the broker provision.","Broker & Addenda","boolean")
     if o.broker_brought_sale is True:
         add("broker_name","Broker Name",o.broker_name,True,"Enter the broker named in the contract.","Broker & Addenda")
+        add("agent_name","Agent Name",o.agent_name,True,"Enter the agent preparing the offer.","Broker & Addenda")
 
     if o.escalation:
         add("escalation_increment","Escalation Increment",o.escalation_increment,True,"Required for the Price Escalation Agreement.","Addenda","money")
