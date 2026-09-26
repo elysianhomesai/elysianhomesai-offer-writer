@@ -11,7 +11,7 @@ function display(c){
 $("#form").addEventListener("submit",async e=>{
   e.preventDefault();const btn=e.submitter;btn.disabled=true;btn.textContent="Preparing…";
   try{
-    const r=await fetch("/api/intake",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({mls_number:$("#mls").value,buyers:$("#buyers").value,offer_text:$("#offer").value})});
+    const r=await fetch("/api/intake",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({mls_number:$("#mls").value,buyers:$("#buyers").value,agent_name:$("#agent").value,offer_text:$("#offer").value})});
     if(!r.ok)throw new Error("Unable to prepare offer");
     render(await r.json());
   }catch(err){alert(err.message)}
