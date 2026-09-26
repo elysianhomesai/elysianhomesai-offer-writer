@@ -12,9 +12,10 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from .models import IntakeRequest, IntakeResult, ClarificationRequest
 from .parser import parse_offer
 from .validator import validate_offer
+from .generate_grar import generate_contract
 
 BASE = Path(__file__).resolve().parent.parent
-app = FastAPI(title="Elysian Offer Writer", version="0.3.0")
+app = FastAPI(title="Elysian Offer Writer", version="0.5.0")
 app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
 
 
@@ -45,6 +46,18 @@ def clarify(req: ClarificationRequest):
     checks, ready = validate_offer(offer)
     return IntakeResult(offer=offer, checks=checks, ready=ready)
 
+
+@app.post("/api/final-grar-pdf")
+def final_grar_pdf(req: ClarificationRequest):
+    payload = req.offer.model_dump()
+    payload.update(req.updates)
+    offer = type(req.offer).model_validate(payload)
+    checks, ready = validate_offer(offer)
+    if not ready:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=422, detail={"missing": [x.label for x in checks if x.status != "complete"]})
+    pdf = generate_contract(offer)
+    return StreamingResponse(pdf, media_type="application/pdf", headers={"Content-Disposition": f'attachment; filename="GRAR-Offer-{offer.mls_number}.pdf"'})
 
 @app.post("/api/contract-summary")
 def contract_summary(req: ClarificationRequest):
