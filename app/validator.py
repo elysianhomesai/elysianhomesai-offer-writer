@@ -68,4 +68,4 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
     add("offer_expiration","Offer Expiration",o.offer_expiration,True,"Confirm when the offer expires.","Life of Offer","datetime-local")
 
     missing=any(c.status!="complete" for c in checks)
-    return checks, not missing
+    return checks, not missing\n    elif o.financing_type=="cash":\n        add("cash_proof_date","Proof of Funds Date",o.cash_proof_date,True,"Required for the cash transaction contingency.","Financing","date")
