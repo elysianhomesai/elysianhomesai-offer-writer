@@ -16,7 +16,7 @@ class OfferData(BaseModel):
     attorney_approval_days:int=3; systems_working_order:bool|None=None; property_disclosure_status:Literal["provided","exempt"]|None=None; co_cost_threshold:int|None=0; zoning_use:str|None=None; hetpa_basis:Literal["primary_residence","lineal_relation_or_spouse","seller_estate_trust_business","addendum_required"]|None=None
     closing_date:str|None=None; closing_county:str|None=None; possession:Literal["at_closing","seller_retained","buyer_early"]|None=None
     broker_brought_sale:bool|None=None; broker_name:str|None=None; agent_name:str|None=None; agent_license_no:str|None=None; agent_phone:str|None=None; agent_cell:str|None=None; agent_email:str|None=None
-    buyer_attorney_name:str|None=None; buyer_attorney_email:str|None=None; buyer_attorney_name:str|None=None; buyer_attorney_email:str|None=None
+    buyer_attorney_name:str|None=None; buyer_attorney_email:str|None=None
     escalation:bool=False; escalation_increment:int|None=None; escalation_cap:int|None=None
     well_septic:bool=False; well_potability:bool=False; well_volume:bool=False; septic_inspection:bool=False; well_septic_completion_days:int|None=None; well_septic_expense:Literal["buyer","seller"]|None=None; well_septic_objection_days:int|None=None; well_septic_negotiation_days:int|None=None; restoration_escrow:int|None=None; restoration_days:int|None=None
     additional_personal_property:bool=False; personal_property_sum:int|None=None; personal_property_sum_words:str|None=None; personal_property_description:str|None=None
