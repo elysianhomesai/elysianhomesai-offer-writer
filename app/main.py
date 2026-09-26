@@ -31,7 +31,8 @@ def health():
 
 @app.post("/api/intake", response_model=IntakeResult)
 def intake(req: IntakeRequest):
-    offer = parse_offer(req.mls_number, req.buyers, req.offer_text)\n    offer.agent_name = req.agent_name.strip()
+    offer = parse_offer(req.mls_number, req.buyers, req.offer_text)
+    offer.agent_name = req.agent_name.strip()
     offer.agent_license_no = req.agent_license_no
     offer.agent_phone = req.agent_phone
     offer.agent_cell = req.agent_cell
