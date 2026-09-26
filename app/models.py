@@ -1,7 +1,11 @@
 from typing import Literal
 from pydantic import BaseModel, Field
 Status = Literal["complete","missing","needs_confirmation"]
-class Buyer(BaseModel): name: str
+class Buyer(BaseModel):
+    name: str
+    phone: str|None=None
+    cell: str|None=None
+    email: str|None=None
 class OfferData(BaseModel):
     mls_number:str; buyers:list[Buyer]; raw_offer_text:str
     seller_1:str|None=None; seller_2:str|None=None
@@ -16,7 +20,10 @@ class OfferData(BaseModel):
     well_septic:bool=False; well_potability:bool=False; well_volume:bool=False; septic_inspection:bool=False; well_septic_completion_days:int|None=None; well_septic_expense:Literal["buyer","seller"]|None=None; well_septic_objection_days:int|None=None; well_septic_negotiation_days:int|None=None; restoration_escrow:int|None=None; restoration_days:int|None=None
     additional_personal_property:bool=False; personal_property_sum:int|None=None; personal_property_sum_words:str|None=None; personal_property_description:str|None=None
     other_terms:str|None=None; contract_date:str|None=None; offer_expiration:str|None=None; notes:list[str]=Field(default_factory=list)
-class IntakeRequest(BaseModel): mls_number:str; buyers:str; agent_name:str; offer_text:str
+class IntakeRequest(BaseModel):
+    mls_number:str; buyers:str; agent_name:str; offer_text:str
+    buyer_phone:str|None=None; buyer_cell:str|None=None; buyer_email:str|None=None
+    agent_license_no:str|None=None; agent_phone:str|None=None; agent_cell:str|None=None; agent_email:str|None=None
 class ClarificationRequest(BaseModel): offer:OfferData; updates:dict[str,str|int|float|bool|None]=Field(default_factory=dict)
 class FieldCheck(BaseModel):
     key:str; label:str; status:Status; value:str|int|float|bool|None=None; reason:str|None=None; section:str="Offer Terms"; input_type:str="text"; options:list[str]=Field(default_factory=list)
