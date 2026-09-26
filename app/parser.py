@@ -2,9 +2,14 @@ import re
 from datetime import datetime
 from .models import OfferData, Buyer
 
-def _money(token: str, k: str | None) -> int:
-    n=float(token.replace(",","").strip())
-    return int(n*1000 if k else n)
+def _money(token: str | None, k: str | None = None) -> int | None:
+    if token is None:
+        return None
+    cleaned = token.replace(",", "").replace("$", "").strip()
+    if not cleaned or not re.fullmatch(r"\d+(?:\.\d+)?", cleaned):
+        return None
+    n = float(cleaned)
+    return int(n * 1000 if k else n)
 
 def _bool_phrase(low, yes, no):
     if re.search(no,low): return False
@@ -17,9 +22,13 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
     def m(pattern): return re.search(pattern,low)
 
     x=m(r"(?:offer(?:ing)?|price|at)\s*\$?([\d,.]+)\s*(k)?") or re.match(r"\s*\$?([\d,.]+)\s*(k)?\b",low)
-    if x:data.purchase_price=_money(x.group(1),x.group(2))
+    if x:
+        value=_money(x.group(1),x.group(2))
+        if value is not None:data.purchase_price=value
     x=m(r"\$?([\d,.]+)\s*(k)?\s*(?:deposit|emd|earnest)")
-    if x:data.deposit=_money(x.group(1),x.group(2))
+    if x:
+        value=_money(x.group(1),x.group(2))
+        if value is not None:data.deposit=value
     x=m(r"(\d+(?:\.\d+)?)\s*%\s*(?:down|down payment)")
     if x:data.down_payment_percent=float(x.group(1))
     for kind in ("conventional","fha","va","cash"):
@@ -47,9 +56,17 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
     data.radon_inspection=_bool_phrase(low,r"(?:radon\s+(?:yes|included|inspection|test)|with\s+radon)",r"(?:no|without|waive)\s+radon")
 
     x=m(r"\$?([\d,.]+)\s*(k)?\s*(?:seller\s+)?concession") or m(r"(?:seller\s+)?concession(?:s)?\s*(?:of|at|for)\s*\$?([\d,.]+)\s*(k)?")
-    if x:data.seller_concession=_money(x.group(1),x.group(2))
+    if x:
+        value=_money(x.group(1),x.group(2))
+        if value is not None:data.seller_concession=value
     x=m(r"escalat(?:e|ion).*?(?:by|increment)\s*\$?([\d,.]+)\s*(k)?.*?(?:to|cap(?:ped)?(?:\s+at)?)\s*\$?([\d,.]+)\s*(k)?")
-    if x:data.escalation=True;data.escalation_increment=_money(x.group(1),x.group(2));data.escalation_cap=_money(x.group(3),x.group(4))
+    if x:
+        increment=_money(x.group(1),x.group(2))
+        cap=_money(x.group(3),x.group(4))
+        if increment is not None and cap is not None:
+            data.escalation=True
+            data.escalation_increment=increment
+            data.escalation_cap=cap
 
     x=m(r"(?:close|closing)\s+(?:on\s+)?(20\d{2}-\d{2}-\d{2})")
     if x:data.closing_date=x.group(1)
