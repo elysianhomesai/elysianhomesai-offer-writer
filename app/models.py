@@ -33,6 +33,10 @@ class IntakeRequest(BaseModel):
     buyers: str
     offer_text: str
 
+class ClarificationRequest(BaseModel):
+    offer: OfferData
+    updates: dict[str, str | int | float | bool | None] = Field(default_factory=dict)
+
 class FieldCheck(BaseModel):
     key: str
     label: str
