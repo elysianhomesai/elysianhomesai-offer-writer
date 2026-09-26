@@ -32,6 +32,8 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
         add("interest_rate_cap","Maximum Interest Rate %",o.interest_rate_cap,True,"The mortgage contingency contains a maximum interest-rate field.","Financing","number")
         add("mortgage_term_years","Mortgage Term (Years)",o.mortgage_term_years,True,"The mortgage contingency contains a loan-term field.","Financing","number")
         add("mortgage_repair_threshold","Mortgage Repair Threshold",o.mortgage_repair_threshold,True,"Confirm the lender-required repair threshold.","Financing","money")
+    elif o.financing_type=="cash":
+        add("cash_proof_date","Proof of Funds Date",o.cash_proof_date,True,"Required for the cash transaction contingency.","Financing","date")
 
     add("sale_transfer_contingency","Sale/Transfer of Buyer's Property",o.sale_transfer_contingency,True,"Confirm whether this contingency applies.","Contingencies","boolean")
     add("building_code_contingency","Building Code Compliance Contingency",o.building_code_contingency,True,"Confirm whether this contingency applies.","Contingencies","boolean")
@@ -66,9 +68,6 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
         add("escalation_cap","Escalation Cap",o.escalation_cap,True,"Required for the Price Escalation Agreement.","Addenda","money")
 
     add("offer_expiration","Offer Expiration",o.offer_expiration,True,"Confirm when the offer expires.","Life of Offer","datetime-local")
-
-    elif o.financing_type=="cash":
-        add("cash_proof_date","Proof of Funds Date",o.cash_proof_date,True,"Required for the cash transaction contingency.","Financing","date")
 
     missing=any(c.status!="complete" for c in checks)
     return checks, not missing
