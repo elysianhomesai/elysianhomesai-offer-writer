@@ -1,8 +1,5 @@
 import re
-from datetime import datetime
 from .models import OfferData, Buyer
-
-MONEY_RE = re.compile(r"(?<!\w)\$?([\d,.]+)\s*(k)?", re.I)
 
 def _money(token: str, k: str | None) -> int:
     n=float(token.replace(",",""))
@@ -15,7 +12,6 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
         buyers=[Buyer(name=x.strip()) for x in re.split(r",|\band\b", buyers) if x.strip()],
         raw_offer_text=text.strip(),
     )
-    # Deterministic V1 parser. It intentionally leaves ambiguous terms blank.
     m=re.search(r"(?:offer(?:ing)?|price|at)\s*\$?([\d,.]+)\s*(k)?", low)
     if not m:
         m=re.match(r"\s*\$?([\d,.]+)\s*(k)?\b", low)
@@ -28,7 +24,9 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
     if m: data.down_payment_percent=float(m.group(1))
 
     for kind in ("conventional","fha","va","cash"):
-        if re.search(rf"\b{kind}\b", low): data.financing_type=kind; break
+        if re.search(rf"\b{kind}\b", low):
+            data.financing_type=kind
+            break
 
     if data.purchase_price and data.down_payment_percent is not None and data.financing_type!="cash":
         data.mortgage_amount=round(data.purchase_price*(1-data.down_payment_percent/100))
@@ -52,7 +50,6 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
         data.escalation_cap=_money(m.group(3),m.group(4))
 
     data.well_septic=bool(re.search(r"\b(well|septic)\b",low))
-    # Dates stay conservative in V1: recognizable ISO dates only.
     m=re.search(r"(?:close|closing)\s+(?:on\s+)?(20\d{2}-\d{2}-\d{2})", low)
     if m: data.closing_date=m.group(1)
     return data
