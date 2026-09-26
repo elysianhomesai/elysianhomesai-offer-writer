@@ -44,6 +44,8 @@ def validate_offer(o: OfferData) -> tuple[list[FieldCheck], bool]:
         add("radon_inspection","Radon Inspection",o.radon_inspection,True,"Confirm whether radon testing is included.","Inspections","boolean")
 
     add("attorney_approval_days","Attorney Approval Period",o.attorney_approval_days,True,"Contract defaults to 3 if left blank.","Attorney Approval","number")
+    add("buyer_attorney_name","Buyer Attorney Name",o.buyer_attorney_name,True,"Required for the buyer-side administrative page.","Attorney Approval")
+    add("buyer_attorney_email","Buyer Attorney Email",o.buyer_attorney_email,True,"Required for the buyer-side administrative page.","Attorney Approval","email")
 
     add("systems_working_order","Systems in Working Order at Closing",o.systems_working_order,True,"Confirm whether the optional working-order provision is selected.","Property Conditions","boolean")
     add("property_disclosure_status","Property Condition Disclosure",o.property_disclosure_status,True,"Confirm provided or exempt.","Property Conditions","select",["provided","exempt"])
