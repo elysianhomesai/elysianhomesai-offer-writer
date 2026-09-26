@@ -21,7 +21,8 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
     data=OfferData(mls_number=mls_number.strip(),buyers=[Buyer(name=x.strip()) for x in re.split(r",|\band\b",buyers) if x.strip()],raw_offer_text=text.strip())
     def m(pattern): return re.search(pattern,low)
 
-    re_match = re.match(r"\s*\$?([\d,.]+)\s*(k)?\b",low)\n    x=re_match or m(r"(?:offer(?:ing)?|offer price|purchase price|price)\s*(?:of|is|:)?\s*\$?([\d,.]+)\s*(k)?\b")
+    re_match = re.match(r"\s*\$?([\d,.]+)\s*(k)?\b",low)
+    x=re_match or m(r"(?:offer(?:ing)?|offer price|purchase price|price)\s*(?:of|is|:)?\s*\$?([\d,.]+)\s*(k)?\b")
     if x:
         value=_money(x.group(1),x.group(2))
         if value is not None:data.purchase_price=value
@@ -87,7 +88,9 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
     if m(r"(?:elysian homes|broker).{0,20}(?:brought|broker)"):data.broker_brought_sale=True
     x=m(r"broker(?:age)?\s*(?:is|:)?\s*([a-z][a-z &.'-]{2,40})")
     if x:data.broker_name=x.group(1).strip().title()
-    if "elysian homes" in low:data.broker_brought_sale=True;data.broker_name="Elysian Homes"\n    x=m(r"(?:agent|realtor)\\s+(?:name\\s+)?(?:is\\s+)?([a-z][a-z .-]{1,50}?)(?=\\.|,|;|\\s+with\\s+|\\s+at\\s+|$)")\n    if x:data.agent_name=x.group(1).strip().title()
+    if "elysian homes" in low:data.broker_brought_sale=True;data.broker_name="Elysian Homes"
+    x=m(r"(?:agent|realtor)\\s+(?:name\\s+)?(?:is\\s+)?([a-z][a-z .-]{1,50}?)(?=\\.|,|;|\\s+with\\s+|\\s+at\\s+|$)")
+    if x:data.agent_name=x.group(1).strip().title()
 
     data.well_septic=bool(m(r"\b(well|septic)\b"))
     data.additional_personal_property=bool(m(r"additional personal property"))
