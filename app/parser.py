@@ -2,8 +2,11 @@ import re
 from .models import OfferData, Buyer
 
 def _money(token: str, k: str | None) -> int:
-    n=float(token.replace(",",""))
-    return int(n*1000 if k else n)
+    cleaned = token.replace(",", "").strip()
+    if not cleaned:
+        raise ValueError("Money value was empty")
+    n = float(cleaned)
+    return int(n * 1000 if k else n)
 
 def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
     low=text.lower()
@@ -39,9 +42,14 @@ def parse_offer(mls_number: str, buyers: str, text: str) -> OfferData:
         if not m: m=re.search(r"(\d+)\s*(?:calendar\s*)?days?\s+(?:for\s+)?inspection", low)
         if m: data.inspection_days=int(m.group(1))
 
-    m=re.search(r"(?:seller\s+)?concession(?:s)?\s*(?:of|at|for)?\s*\$?([\d,.]+)\s*(k)?", low)
-    if not m: m=re.search(r"\$?([\d,.]+)\s*(k)?\s*(?:seller\s+)?concession", low)
-    if m: data.seller_concession=_money(m.group(1),m.group(2))
+    # Prefer amount-before-label form (e.g. "$5k seller concession").
+    # The optional words in the label-first pattern previously allowed the
+    # amount capture to become empty on text such as "$5k seller concession".
+    m=re.search(r"\$?([\d,.]+)\s*(k)?\s*(?:seller\s+)?concession(?:s)?\b", low)
+    if not m:
+        m=re.search(r"(?:seller\s+)?concession(?:s)?\s*(?:of|at|for)\s*\$?([\d,.]+)\s*(k)?\b", low)
+    if m:
+        data.seller_concession=_money(m.group(1),m.group(2))
 
     m=re.search(r"escalat(?:e|ion).*?(?:by|increment)\s*\$?([\d,.]+)\s*(k)?.*?(?:to|cap(?:ped)?(?:\s+at)?)\s*\$?([\d,.]+)\s*(k)?", low)
     if m:
