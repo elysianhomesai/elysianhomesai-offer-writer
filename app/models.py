@@ -16,7 +16,7 @@ class OfferData(BaseModel):
     well_septic:bool=False; well_potability:bool=False; well_volume:bool=False; septic_inspection:bool=False; well_septic_completion_days:int|None=None; well_septic_expense:Literal["buyer","seller"]|None=None; well_septic_objection_days:int|None=None; well_septic_negotiation_days:int|None=None; restoration_escrow:int|None=None; restoration_days:int|None=None
     additional_personal_property:bool=False; personal_property_sum:int|None=None; personal_property_sum_words:str|None=None; personal_property_description:str|None=None
     other_terms:str|None=None; contract_date:str|None=None; offer_expiration:str|None=None; notes:list[str]=Field(default_factory=list)
-class IntakeRequest(BaseModel): mls_number:str; buyers:str; offer_text:str
+class IntakeRequest(BaseModel): mls_number:str; buyers:str; agent_name:str; offer_text:str
 class ClarificationRequest(BaseModel): offer:OfferData; updates:dict[str,str|int|float|bool|None]=Field(default_factory=dict)
 class FieldCheck(BaseModel):
     key:str; label:str; status:Status; value:str|int|float|bool|None=None; reason:str|None=None; section:str="Offer Terms"; input_type:str="text"; options:list[str]=Field(default_factory=list)
