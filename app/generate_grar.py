@@ -91,8 +91,8 @@ def overlay(n,o):
         if o.buyers:
             txt(c,326,175,o.buyers[0].phone or o.buyers[0].cell,8,120)
             txt(c,326,196,o.buyers[0].email,8,245)
-        txt(c,326,239,o.buyer_attorney_name,8,245)
-        txt(c,326,371,o.buyer_attorney_email,8,245)
+        txt(c,326,255,o.buyer_attorney_name,8,245)
+        txt(c,326,354,o.buyer_attorney_email,8,245)
 
         # Elysian Homes brokerage information is constant
         txt(c,326,392,"Elysian Homes by Mark Siwiec and Associates",6.5,245)
@@ -107,6 +107,22 @@ def overlay(n,o):
         txt(c,326,586,o.agent_phone,8,125)
         txt(c,326,607,o.agent_cell,8,125)
         txt(c,326,628,o.agent_email,8,245)
+    c.showPage();c.save();b.seek(0);return PdfReader(b).pages[0]
+
+def standard_overlay(kind,o):
+    b=BytesIO();c=canvas.Canvas(b,pagesize=letter);buyers,_=names(o)
+    if kind=="agency":
+        # NYS Agency Disclosure page 2: provider + buyer/buyer's-agent relationship.
+        txt(c,153,155,o.agent_name,8,160)
+        txt(c,370,155,"Elysian Homes by Mark Siwiec and Associates",7,190)
+        check(c,320,207);check(c,342,224)
+        txt(c,52,438,", ".join(x for x in buyers if x),8,260)
+        check(c,74,472)
+    elif kind=="fair":
+        # NYS Housing & Anti-Discrimination Disclosure page 2.
+        txt(c,173,210,o.agent_name,8,165)
+        txt(c,66,235,"Elysian Homes by Mark Siwiec and Associates",7,205)
+        txt(c,51,277,", ".join(x for x in buyers if x),8,465)
     c.showPage();c.save();b.seek(0);return PdfReader(b).pages[0]
 
 def addendum(kind,o):
@@ -130,10 +146,12 @@ def generate_contract(o):
     if not MAIN.exists():raise FileNotFoundError("Official GRAR template is not installed.")
     out=PdfWriter()
     for i,p in enumerate(PdfReader(str(MAIN)).pages,1):p.merge_page(overlay(i,o));out.add_page(p)
-    # Standard package documents are always included.
-    for standard in (AGENCY, FAIR_HOUSING):
+    # Standard Elysian package: Purchase & Sale, Agency Disclosure, Fair Housing Disclosure.
+    for standard,kind in ((AGENCY,"agency"),(FAIR_HOUSING,"fair")):
         if standard.exists():
-            for p in PdfReader(str(standard)).pages:out.add_page(p)
+            for idx,p in enumerate(PdfReader(str(standard)).pages,1):
+                if idx==2:p.merge_page(standard_overlay(kind,o))
+                out.add_page(p)
     for path,kind,on in [(ESCALATION,"escalation",o.escalation),(PERSONAL,"personal",o.additional_personal_property),(WELL,"well",o.well_septic)]:
         if on:
             p=PdfReader(str(path)).pages[0];p.merge_page(addendum(kind,o));out.add_page(p)
