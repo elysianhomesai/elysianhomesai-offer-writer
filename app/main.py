@@ -10,7 +10,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 
 from .models import IntakeRequest, IntakeResult, ClarificationRequest
-from .parser import parse_offer
+from .extractor import extract_offer
 from .validator import validate_offer
 from .generate_grar import generate_contract
 
@@ -31,7 +31,7 @@ def health():
 
 @app.post("/api/intake", response_model=IntakeResult)
 def intake(req: IntakeRequest):
-    offer = parse_offer(req.mls_number, req.buyers, req.offer_text)
+    offer = extract_offer(req.mls_number, req.buyers, req.offer_text)
     offer.agent_name = req.agent_name.strip()
     offer.agent_license_no = req.agent_license_no
     offer.agent_phone = req.agent_phone
